@@ -1,5 +1,6 @@
 import type {McpServer} from '@modelcontextprotocol/sdk/server/mcp.js'
 import type {RequestHandlerExtra} from '@modelcontextprotocol/sdk/shared/protocol.js'
+import type {ServerRequest, ServerNotification} from '@modelcontextprotocol/sdk/types.js'
 import {enforceInitialContextMiddleware} from './context/middleware.js'
 import {registerContextTools} from './context/register.js'
 import {registerDatasetsTools} from './datasets/register.js'
@@ -13,19 +14,25 @@ import type {McpRole} from '../types/mcp.js'
 import type {THIS_IS_FINE} from '../types/any.js'
 
 function createContextCheckingServer(server: McpServer): McpServer {
-  const originalTool = server.tool
+  const originalTool = server.tool.bind(server)
   return new Proxy(server, {
     get(target, prop) {
       if (prop === 'tool') {
-        return function (this: THIS_IS_FINE, ...args: THIS_IS_FINE) {
-          const [name, description, schema, handler] = args
-
-          const wrappedHandler = async (args: THIS_IS_FINE, extra: RequestHandlerExtra) => {
-            enforceInitialContextMiddleware(name)
-            return handler(args, extra)
+        return function (this: THIS_IS_FINE, ...args: THIS_IS_FINE[]) {
+          // Handle different overloads
+          if (args.length >= 2) {
+            const lastArg = args[args.length - 1]
+            if (typeof lastArg === 'function') {
+              const handler = lastArg
+              const wrappedHandler = async (params: THIS_IS_FINE, extra: RequestHandlerExtra<ServerRequest, ServerNotification>) => {
+                enforceInitialContextMiddleware(args[0] as string)
+                return handler(params, extra)
+              }
+              args[args.length - 1] = wrappedHandler
+            }
           }
-
-          return originalTool.call(this, name, description, schema, wrappedHandler)
+          
+          return (originalTool as THIS_IS_FINE).apply(server, args)
         }
       }
       return (target as THIS_IS_FINE)[prop]

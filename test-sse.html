@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanity MCP SSE Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        #logs {
+            background: #f5f5f5;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Sanity MCP SSE Server Test</h1>
+    
+    <div class="section">
+        <h2>Connection</h2>
+        <button onclick="connect()">Connect SSE</button>
+        <button onclick="disconnect()">Disconnect</button>
+        <button onclick="checkHealth()">Check Health</button>
+        <span id="status">Disconnected</span>
+    </div>
+    
+    <div class="section">
+        <h2>Test Tools</h2>
+        <button onclick="testGetContext()">Get Initial Context</button>
+        <button onclick="testListProjects()">List Projects</button>
+        <button onclick="testGetSchema()">Get Schema</button>
+    </div>
+    
+    <div class="section">
+        <h2>Logs</h2>
+        <div id="logs"></div>
+    </div>
+    
+    <script>
+        let eventSource = null;
+        let sessionId = null;
+        let messageId = 1;
+        
+        function log(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logs.appendChild(entry);
+            logs.scrollTop = logs.scrollHeight;
+        }
+        
+        function updateStatus(text, color = 'black') {
+            const status = document.getElementById('status');
+            status.textContent = text;
+            status.style.color = color;
+        }
+        
+        async function connect() {
+            if (eventSource) {
+                log('Already connected', 'error');
+                return;
+            }
+            
+            try {
+                log('Connecting to SSE endpoint...');
+                eventSource = new EventSource('http://localhost:3000/sse');
+                
+                eventSource.onopen = () => {
+                    log('SSE connection established', 'success');
+                    updateStatus('Connected', 'green');
+                };
+                
+                eventSource.onmessage = (event) => {
+                    log(`SSE message: ${event.data}`);
+                    
+                    // Extract session ID from the endpoint message
+                    try {
+                        const data = JSON.parse(event.data);
+                        if (data.endpoint) {
+                            const match = data.endpoint.match(/\/messages\/([^/]+)/);
+                            if (match) {
+                                sessionId = match[1];
+                                log(`Session ID: ${sessionId}`, 'success');
+                            }
+                        }
+                    } catch (e) {
+                        // Not JSON, ignore
+                    }
+                };
+                
+                eventSource.onerror = (error) => {
+                    log('SSE connection error', 'error');
+                    updateStatus('Error', 'red');
+                };
+                
+            } catch (error) {
+                log(`Connection error: ${error.message}`, 'error');
+            }
+        }
+        
+        function disconnect() {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+                sessionId = null;
+                log('Disconnected', 'info');
+                updateStatus('Disconnected', 'black');
+            }
+        }
+        
+        async function checkHealth() {
+            try {
+                const response = await fetch('http://localhost:3000/health');
+                const data = await response.json();
+                log(`Health check: ${JSON.stringify(data)}`, 'success');
+            } catch (error) {
+                log(`Health check failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function sendMessage(method, params = {}) {
+            if (!sessionId) {
+                log('Not connected. Please connect first.', 'error');
+                return;
+            }
+            
+            const message = {
+                jsonrpc: '2.0',
+                id: messageId++,
+                method,
+                params
+            };
+            
+            try {
+                log(`Sending: ${method}`);
+                const response = await fetch(`http://localhost:3000/messages/${sessionId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(message)
+                });
+                
+                const result = await response.json();
+                log(`Response: ${JSON.stringify(result)}`, 'success');
+                return result;
+            } catch (error) {
+                log(`Request failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testGetContext() {
+            await sendMessage('tools/call', {
+                name: 'get_initial_context',
+                arguments: {}
+            });
+        }
+        
+        async function testListProjects() {
+            await sendMessage('tools/call', {
+                name: 'list_projects',
+                arguments: {}
+            });
+        }
+        
+        async function testGetSchema() {
+            await sendMessage('tools/call', {
+                name: 'get_schema',
+                arguments: {}
+            });
+        }
+        
+        // Auto-connect on load
+        window.onload = () => {
+            log('Page loaded. Click "Connect SSE" to start.');
+        };
+    </script>
+</body>
+</html>

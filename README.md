@@ -1,79 +1,79 @@
 # Sanity MCP Server <!-- omit in toc -->
 
-> Transform your content operations with AI-powered tools for Sanity. Create, manage, and explore your content through natural language conversations in your favorite AI-enabled editor.
+> Transforme suas operações de conteúdo com ferramentas alimentadas por IA para o Sanity. Crie, gerencie e explore seu conteúdo através de conversas em linguagem natural no seu editor habilitado para IA favorito.
 
-Sanity MCP Server implements the [Model Context Protocol](https://modelcontextprotocol.ai) to connect your Sanity projects with AI tools like Claude, Cursor, and VS Code. It enables AI models to understand your content structure and perform operations through natural language instructions.
+O Sanity MCP Server implementa o [Model Context Protocol](https://modelcontextprotocol.ai) para conectar seus projetos Sanity com ferramentas de IA como Claude, Cursor e VS Code. Ele permite que modelos de IA entendam a estrutura do seu conteúdo e realizem operações através de instruções em linguagem natural.
 
-## ✨ Key Features <!-- omit in toc -->
+## ✨ Principais Recursos <!-- omit in toc -->
 
-- 🤖 **Content Intelligence**: Let AI explore and understand your content library
-- 🔄 **Content Operations**: Automate tasks through natural language instructions
-- 📊 **Schema-Aware**: AI respects your content structure and validation rules
-- 🚀 **Release Management**: Plan and organize content releases effortlessly
-- 🔍 **Semantic Search**: Find content based on meaning, not just keywords
+- 🤖 **Inteligência de Conteúdo**: Deixe a IA explorar e entender sua biblioteca de conteúdo
+- 🔄 **Operações de Conteúdo**: Automatize tarefas através de instruções em linguagem natural
+- 📊 **Consciente do Schema**: A IA respeita a estrutura do seu conteúdo e as regras de validação
+- 🚀 **Gerenciamento de Releases**: Planeje e organize releases de conteúdo sem esforço
+- 🔍 **Busca Semântica**: Encontre conteúdo com base no significado, não apenas em palavras-chave
 
-## Table of Contents <!-- omit in toc -->
+## Sumário <!-- omit in toc -->
 
-- [🔌 Quickstart](#-quickstart)
-  - [Prerequisites](#prerequisites)
-  - [Add configuration for the Sanity MCP server](#add-configuration-for-the-sanity-mcp-server)
-- [🛠️ Available Tools](#️-available-tools)
-- [⚙️ Configuration](#️-configuration)
-  - [🔑 API Tokens and Permissions](#-api-tokens-and-permissions)
-  - [👥 User Roles](#-user-roles)
-- [📦 Node.js Environment Setup](#-nodejs-environment-setup)
-  - [🛠 Quick Setup for Node Version Manager Users](#-quick-setup-for-node-version-manager-users)
-  - [🤔 Why Is This Needed?](#-why-is-this-needed)
-  - [🔍 Troubleshooting](#-troubleshooting)
-- [💻 Development](#-development)
-  - [Debugging](#debugging)
+- [🔌 Guia Rápido](#-guia-rápido)
+  - [Pré-requisitos](#pré-requisitos)
+  - [Adicionar configuração para o servidor Sanity MCP](#adicionar-configuração-para-o-servidor-sanity-mcp)
+- [🛠️ Ferramentas Disponíveis](#️-ferramentas-disponíveis)
+- [⚙️ Configuração](#️-configuração)
+  - [🔑 Tokens de API e Permissões](#-tokens-de-api-e-permissões)
+  - [👥 Papéis de Usuário](#-papéis-de-usuário)
+- [📦 Configuração do Ambiente Node.js](#-configuração-do-ambiente-nodejs)
+  - [🛠 Configuração Rápida para Usuários do Node Version Manager](#-configuração-rápida-para-usuários-do-node-version-manager)
+  - [🤔 Por Que Isso é Necessário?](#-por-que-isso-é-necessário)
+  - [🔍 Solução de Problemas](#-solução-de-problemas)
+- [💻 Desenvolvimento](#-desenvolvimento)
+  - [Depuração](#depuração)
 
-## 🔌 Quickstart
+## 🔌 Guia Rápido
 
-### Prerequisites
+### Pré-requisitos
 
-Before you can use the MCP server, you need to:
+Antes de poder usar o servidor MCP, você precisa:
 
-1. **Deploy your Sanity Studio with schema manifest**
+1. **Implantar seu Sanity Studio com o manifesto do schema**
 
-   The MCP server needs access to your content structure to work effectively. Deploy your schema manifest using one of these approaches:
+   O servidor MCP precisa de acesso à estrutura do seu conteúdo para funcionar efetivamente. Implante o manifesto do seu schema usando uma destas abordagens:
 
    ```bash
-   # Option A: If you have the CLI installed globally
+   # Opção A: Se você tem o CLI instalado globalmente
    npm install -g sanity
    cd /path/to/studio
    sanity schema deploy
 
-   # Option B: Update your Studio
+   # Opção B: Atualize seu Studio
    cd /path/to/studio
    npm update sanity
    npx sanity schema deploy
    ```
 
-   When running in CI environments without Sanity login, you'll need to provide an auth token:
+   Ao executar em ambientes de CI sem login do Sanity, você precisará fornecer um token de autenticação:
 
    ```bash
    SANITY_AUTH_TOKEN=<token> sanity schema deploy
    ```
 
    > [!NOTE]
-   > Schema deployment requires Sanity CLI version 3.88.1 or newer.
+   > A implantação do schema requer a versão 3.88.1 ou mais recente do Sanity CLI.
 
-2. **Get your API credentials**
-   - Project ID
-   - Dataset name
-   - API token with appropriate permissions
+2. **Obter suas credenciais de API**
+   - ID do Projeto
+   - Nome do Dataset
+   - Token de API com permissões apropriadas
 
-This MCP server can be used with any application that supports the Model Context Protocol. Here are some popular examples:
+Este servidor MCP pode ser usado com qualquer aplicação que suporte o Model Context Protocol. Aqui estão alguns exemplos populares:
 
 - [Claude Desktop](https://modelcontextprotocol.io/quickstart/user)
 - [Cursor IDE](https://docs.cursor.com/context/model-context-protocol)
 - [Visual Studio Code](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)
-- Custom MCP-compatible applications
+- Aplicações personalizadas compatíveis com MCP
 
-### Add configuration for the Sanity MCP server
+### Adicionar configuração para o servidor Sanity MCP
 
-To use the Sanity MCP server, add the following configuration to your application's MCP settings:
+Para usar o servidor Sanity MCP, adicione a seguinte configuração às configurações MCP da sua aplicação:
 
 ```json
 {
@@ -92,233 +92,233 @@ To use the Sanity MCP server, add the following configuration to your applicatio
 }
 ```
 
-For a complete list of all required and optional environment variables, see the [Configuration section](#️-configuration).
+Para uma lista completa de todas as variáveis de ambiente obrigatórias e opcionais, consulte a [seção Configuração](#️-configuração).
 
-The exact location of this configuration will depend on your application:
+A localização exata desta configuração dependerá da sua aplicação:
 
-| Application    | Configuration Location                            |
+| Aplicação    | Localização da Configuração                       |
 | -------------- | ------------------------------------------------- |
-| Claude Desktop | Claude Desktop configuration file                 |
-| Cursor         | Workspace or global settings                      |
-| VS Code        | Workspace or user settings (depends on extension) |
-| Custom Apps    | Refer to your app's MCP integration docs          |
+| Claude Desktop | Arquivo de configuração do Claude Desktop         |
+| Cursor         | Configurações do Workspace ou globais             |
+| VS Code        | Configurações do Workspace ou do usuário (depende da extensão) |
+| Apps Personalizadas | Consulte a documentação de integração MCP do seu app |
 
-You don't get it to work? See the section on [Node.js configuration](#-nodejs-environment-setup).
+Não conseguiu fazer funcionar? Consulte a seção sobre [configuração do Node.js](#-configuração-do-ambiente-nodejs).
 
-## 🛠️ Available Tools
+## 🛠️ Ferramentas Disponíveis
 
-### Context & Setup <!-- omit in toc -->
+### Contexto e Configuração <!-- omit in toc -->
 
-- **get_initial_context** – IMPORTANT: Must be called before using any other tools to initialize context and get usage instructions.
-- **get_sanity_config** – Retrieves current Sanity configuration (projectId, dataset, apiVersion, etc.)
+- **get_initial_context** – IMPORTANTE: Deve ser chamado antes de usar quaisquer outras ferramentas para inicializar o contexto e obter instruções de uso.
+- **get_sanity_config** – Recupera a configuração atual do Sanity (projectId, dataset, apiVersion, etc.)
 
-### Document Operations <!-- omit in toc -->
+### Operações de Documento <!-- omit in toc -->
 
-- **create_document** – Create a new document with AI-generated content based on instructions
-- **update_document** – Update an existing document with AI-generated content based on instructions
-- **patch_document** - Apply direct patch operations to modify specific parts of a document without using AI generation
-- **transform_document** – Transform document content while preserving formatting and structure, ideal for text replacements and style corrections
-- **translate_document** – Translate document content to another language while preserving formatting and structure
-- **query_documents** – Execute GROQ queries to search for and retrieve content
-- **document_action** – Perform document actions like publishing, unpublishing, or deleting documents
+- **create_document** – Criar um novo documento com conteúdo gerado por IA com base em instruções
+- **update_document** – Atualizar um documento existente com conteúdo gerado por IA com base em instruções
+- **patch_document** - Aplicar operações de patch diretas para modificar partes específicas de um documento sem usar geração de IA
+- **transform_document** – Transformar o conteúdo do documento preservando a formatação e a estrutura, ideal para substituições de texto e correções de estilo
+- **translate_document** – Traduzir o conteúdo do documento para outro idioma preservando a formatação e a estrutura
+- **query_documents** – Executar consultas GROQ para pesquisar e recuperar conteúdo
+- **document_action** – Realizar ações em documentos como publicar, despublicar ou excluir documentos
 
-### Release Management <!-- omit in toc -->
+### Gerenciamento de Releases <!-- omit in toc -->
 
-- **list_releases** – List content releases, optionally filtered by state
-- **create_release** – Create a new content release
-- **edit_release** – Update metadata for an existing release
-- **schedule_release** – Schedule a release to publish at a specific time
-- **release_action** – Perform actions on releases (publish, archive, unarchive, unschedule, delete)
+- **list_releases** – Listar releases de conteúdo, opcionalmente filtradas por estado
+- **create_release** – Criar uma nova release de conteúdo
+- **edit_release** – Atualizar metadados de uma release existente
+- **schedule_release** – Agendar uma release para ser publicada em um horário específico
+- **release_action** – Realizar ações em releases (publicar, arquivar, desarquivar, desagendar, excluir)
 
-### Version Management <!-- omit in toc -->
+### Gerenciamento de Versões <!-- omit in toc -->
 
-- **create_version** – Create a version of a document for a specific release
-- **discard_version** – Delete a specific version document from a release
-- **mark_for_unpublish** – Mark a document to be unpublished when a specific release is published
+- **create_version** – Criar uma versão de um documento para uma release específica
+- **discard_version** – Excluir um documento de versão específico de uma release
+- **mark_for_unpublish** – Marcar um documento para ser despublicado quando uma release específica for publicada
 
-### Dataset Management <!-- omit in toc -->
+### Gerenciamento de Datasets <!-- omit in toc -->
 
-- **get_datasets** – List all datasets in the project
-- **create_dataset** – Create a new dataset
-- **update_dataset** – Modify dataset settings
+- **get_datasets** – Listar todos os datasets no projeto
+- **create_dataset** – Criar um novo dataset
+- **update_dataset** – Modificar configurações do dataset
 
-### Schema Information <!-- omit in toc -->
+### Informações do Schema <!-- omit in toc -->
 
-- **get_schema** – Get schema details, either full schema or for a specific type
-- **list_workspace_schemas** – Get a list of all available workspace schema names
+- **get_schema** – Obter detalhes do schema, seja o schema completo ou para um tipo específico
+- **list_workspace_schemas** – Obter uma lista de todos os nomes de schemas de workspace disponíveis
 
-### GROQ Support <!-- omit in toc -->
+### Suporte GROQ <!-- omit in toc -->
 
-- **get_groq_specification** – Get the GROQ language specification summary
+- **get_groq_specification** – Obter o resumo da especificação da linguagem GROQ
 
-### Embeddings & Semantic Search <!-- omit in toc -->
+### Embeddings e Busca Semântica <!-- omit in toc -->
 
-- **list_embeddings_indices** – List all available embeddings indices
-- **semantic_search** – Perform semantic search on an embeddings index
+- **list_embeddings_indices** – Listar todos os índices de embeddings disponíveis
+- **semantic_search** – Realizar busca semântica em um índice de embeddings
 
-### Project Information <!-- omit in toc -->
+### Informações do Projeto <!-- omit in toc -->
 
-- **list_projects** – List all Sanity projects associated with your account
-- **get_project_studios** – Get studio applications linked to a specific project
+- **list_projects** – Listar todos os projetos Sanity associados à sua conta
+- **get_project_studios** – Obter aplicações de studio vinculadas a um projeto específico
 
-## ⚙️ Configuration
+## ⚙️ Configuração
 
-The server takes the following environment variables:
+O servidor utiliza as seguintes variáveis de ambiente:
 
-| Variable            | Description                                        | Required |
-| ------------------- | -------------------------------------------------- | -------- |
-| `SANITY_API_TOKEN`  | Your Sanity API token                              | ✅       |
-| `SANITY_PROJECT_ID` | Your Sanity project ID                             | ✅       |
-| `SANITY_DATASET`    | The dataset to use                                 | ✅       |
-| `MCP_USER_ROLE`     | Determines tool access level (developer or editor) | ✅       |
-| `SANITY_API_HOST`   | API host (defaults to https://api.sanity.io)       | ❌       |
+| Variável            | Descrição                                                    | Obrigatório |
+| ------------------- | ------------------------------------------------------------ | -------- |
+| `SANITY_API_TOKEN`  | Seu token de API do Sanity                                   | ✅       |
+| `SANITY_PROJECT_ID` | O ID do seu projeto Sanity                                   | ✅       |
+| `SANITY_DATASET`    | O dataset a ser usado                                        | ✅       |
+| `MCP_USER_ROLE`     | Determina o nível de acesso às ferramentas (developer ou editor) | ✅       |
+| `SANITY_API_HOST`   | Host da API (padrão: https://api.sanity.io)                  | ❌       |
 
-> [!WARNING] > **Using AI with Production Datasets**
-> When configuring the MCP server with a token that has write access to a production dataset, please be aware that the AI can perform destructive actions like creating, updating, or deleting content. This is not a concern if you're using a read-only token. While we are actively developing guardrails, you should exercise caution and consider using a development/staging dataset for testing AI operations that require write access.
+> [!WARNING] > **Usando IA com Datasets de Produção**
+> Ao configurar o servidor MCP com um token que tem acesso de escrita a um dataset de produção, esteja ciente de que a IA pode realizar ações destrutivas como criar, atualizar ou excluir conteúdo. Isso não é uma preocupação se você estiver usando um token somente leitura. Embora estejamos desenvolvendo ativamente mecanismos de proteção, você deve ter cautela e considerar o uso de um dataset de desenvolvimento/homologação para testar operações de IA que exigem acesso de escrita.
 
-### 🔑 API Tokens and Permissions
+### 🔑 Tokens de API e Permissões
 
-The MCP server requires appropriate API tokens and permissions to function correctly. Here's what you need to know:
+O servidor MCP requer tokens de API e permissões apropriadas para funcionar corretamente. Eis o que você precisa saber:
 
-1. **Generate a Robot Token**:
+1. **Gerar um Token de Robô**:
 
-   - Go to your project's management console: Settings > API > Tokens
-   - Click "Add new token"
-   - Create a dedicated token for your MCP server usage
-   - Store the token securely - it's only shown once!
+   - Vá para o console de gerenciamento do seu projeto: Configurações > API > Tokens
+   - Clique em "Adicionar novo token"
+   - Crie um token dedicado para o uso do seu servidor MCP
+   - Armazene o token com segurança - ele só é mostrado uma vez!
 
-2. **Required Permissions**:
+2. **Permissões Necessárias**:
 
-   - The token needs appropriate permissions based on your usage
-   - For basic read operations: `viewer` role is sufficient
-   - For content management: `editor` or `developer` role recommended
-   - For advanced operations (like managing datasets): `administrator` role may be needed
+   - O token precisa de permissões apropriadas com base no seu uso
+   - Para operações básicas de leitura: o papel `viewer` é suficiente
+   - Para gerenciamento de conteúdo: papel `editor` ou `developer` recomendado
+   - Para operações avançadas (como gerenciar datasets): o papel `administrator` pode ser necessário
 
-3. **Dataset Access**:
+3. **Acesso ao Dataset**:
 
-   - Public datasets: Content is readable by unauthenticated users
-   - Private datasets: Require proper token authentication
-   - Draft and versioned content: Only accessible to authenticated users with appropriate permissions
+   - Datasets públicos: O conteúdo é legível por usuários não autenticados
+   - Datasets privados: Requerem autenticação de token adequada
+   - Conteúdo de rascunho e versionado: Acessível apenas a usuários autenticados com as permissões apropriadas
 
-4. **Security Best Practices**:
-   - Use separate tokens for different environments (development, staging, production)
-   - Never commit tokens to version control
-   - Consider using environment variables for token management
-   - Regularly rotate tokens for security
+4. **Melhores Práticas de Segurança**:
+   - Use tokens separados para ambientes diferentes (desenvolvimento, homologação, produção)
+   - Nunca comite tokens para o controle de versão
+   - Considere usar variáveis de ambiente para gerenciamento de tokens
+   - Rotacione tokens regularmente por segurança
 
-### 👥 User Roles
+### 👥 Papéis de Usuário
 
-The server supports two user roles:
+O servidor suporta dois papéis de usuário:
 
-- **developer**: Access to all tools
-- **editor**: Content-focused tools without project administration
+- **developer**: Acesso a todas as ferramentas
+- **editor**: Ferramentas focadas em conteúdo sem administração de projeto
 
-## 📦 Node.js Environment Setup
+## 📦 Configuração do Ambiente Node.js
 
-> **Important for Node Version Manager Users**: If you use `nvm`, `mise`, `fnm`, `nvm-windows` or similar tools, you'll need to follow the setup steps below to ensure MCP servers can access Node.js. This is a one-time setup that will save you troubleshooting time later. This is [an ongoing issue](https://github.com/modelcontextprotocol/servers/issues/64) with MCP servers.
+> **Importante para Usuários do Node Version Manager**: Se você usa `nvm`, `mise`, `fnm`, `nvm-windows` ou ferramentas similares, você precisará seguir os passos de configuração abaixo para garantir que os servidores MCP possam acessar o Node.js. Esta é uma configuração única que economizará seu tempo de solução de problemas mais tarde. Este é [um problema contínuo](https://github.com/modelcontextprotocol/servers/issues/64) com servidores MCP.
 
-### 🛠 Quick Setup for Node Version Manager Users
+### 🛠 Configuração Rápida para Usuários do Node Version Manager
 
-1. First, activate your preferred Node.js version:
+1. Primeiro, ative sua versão preferida do Node.js:
 
    ```bash
-   # Using nvm
-   nvm use 20   # or your preferred version
+   # Usando nvm
+   nvm use 20   # ou sua versão preferida
 
-   # Using mise
+   # Usando mise
    mise use node@20
 
-   # Using fnm
+   # Usando fnm
    fnm use 20
    ```
 
-2. Then, create the necessary symlinks (choose your OS):
+2. Em seguida, crie os links simbólicos necessários (escolha seu SO):
 
-   **On macOS/Linux:**
+   **Em macOS/Linux:**
 
    ```bash
    sudo ln -sf "$(which node)" /usr/local/bin/node && sudo ln -sf "$(which npx)" /usr/local/bin/npx
    ```
 
    > [!NOTE]
-   > While using `sudo` generally requires caution, it's safe in this context because:
+   > Embora o uso de `sudo` geralmente exija cautela, é seguro neste contexto porque:
    >
-   > - We're only creating symlinks to your existing Node.js binaries
-   > - The target directory (`/usr/local/bin`) is a standard system location for user-installed programs
-   > - The symlinks only point to binaries you've already installed and trust
-   > - You can easily remove these symlinks later with `sudo rm`
+   > - Estamos apenas criando links simbólicos para seus binários Node.js existentes
+   > - O diretório de destino (`/usr/local/bin`) é um local padrão do sistema para programas instalados pelo usuário
+   > - Os links simbólicos apontam apenas para binários que você já instalou e confia
+   > - Você pode remover facilmente esses links simbólicos mais tarde com `sudo rm`
 
-   **On Windows (PowerShell as Administrator):**
+   **No Windows (PowerShell como Administrador):**
 
    ```powershell
    New-Item -ItemType SymbolicLink -Path "C:\Program Files\nodejs\node.exe" -Target (Get-Command node).Source -Force
    New-Item -ItemType SymbolicLink -Path "C:\Program Files\nodejs\npx.cmd" -Target (Get-Command npx).Source -Force
    ```
 
-3. Verify the setup:
+3. Verifique a configuração:
    ```bash
-   # Should show your chosen Node version
+   # Deve mostrar a versão escolhida do Node
    /usr/local/bin/node --version  # macOS/Linux
    "C:\Program Files\nodejs\node.exe" --version  # Windows
    ```
 
-### 🤔 Why Is This Needed?
+### 🤔 Por Que Isso é Necessário?
 
-MCP servers are launched by calling `node` and `npx` binaries directly. When using Node version managers, these binaries are managed in isolated environments that aren't automatically accessible to system applications. The symlinks above create a bridge between your version manager and the system paths that MCP servers use.
+Os servidores MCP são iniciados chamando diretamente os binários `node` e `npx`. Ao usar gerenciadores de versão do Node, esses binários são gerenciados em ambientes isolados que não são automaticamente acessíveis às aplicações do sistema. Os links simbólicos acima criam uma ponte entre seu gerenciador de versão e os caminhos do sistema que os servidores MCP usam.
 
-### 🔍 Troubleshooting
+### 🔍 Solução de Problemas
 
-If you switch Node versions often:
+Se você alterna frequentemente as versões do Node:
 
-- Remember to update your symlinks when changing Node versions
-- You can create a shell alias or script to automate this:
+- Lembre-se de atualizar seus links simbólicos ao mudar as versões do Node
+- Você pode criar um alias de shell ou script para automatizar isso:
   ```bash
-  # Example alias for your .bashrc or .zshrc
+  # Exemplo de alias para seu .bashrc ou .zshrc
   alias update-node-symlinks='sudo ln -sf "$(which node)" /usr/local/bin/node && sudo ln -sf "$(which npx)" /usr/local/bin/npx'
   ```
 
-To remove the symlinks later:
+Para remover os links simbólicos mais tarde:
 
 ```bash
 # macOS/Linux
 sudo rm /usr/local/bin/node /usr/local/bin/npx
 
-# Windows (PowerShell as Admin)
+# Windows (PowerShell como Admin)
 Remove-Item "C:\Program Files\nodejs\node.exe", "C:\Program Files\nodejs\npx.cmd"
 ```
 
-## 💻 Development
+## 💻 Desenvolvimento
 
-Install dependencies:
+Instale as dependências:
 
 ```bash
 pnpm install
 ```
 
-Build and run in development mode:
+Compile e execute em modo de desenvolvimento:
 
 ```bash
 pnpm run dev
 ```
 
-Build the server:
+Compile o servidor:
 
 ```bash
 pnpm run build
 ```
 
-Run the built server:
+Execute o servidor compilado:
 
 ```bash
 pnpm start
 ```
 
-### Debugging
+### Depuração
 
-For debugging, you can use the MCP inspector:
+Para depuração, você pode usar o inspetor MCP:
 
 ```bash
 npx @modelcontextprotocol/inspector -e SANITY_API_TOKEN=<token> -e SANITY_PROJECT_ID=<project_id> -e SANITY_DATASET=<ds> -e MCP_USER_ROLE=developer node path/to/build/index.js
 ```
 
-This will provide a web interface for inspecting and testing the available tools.
+Isso fornecerá uma interface web para inspecionar e testar as ferramentas disponíveis. 
